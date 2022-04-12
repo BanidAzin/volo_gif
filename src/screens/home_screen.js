@@ -1,13 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import {
-  View,
-  Text,
-  SafeAreaView,
-  ActivityIndicator,
-  StyleSheet,
-} from 'react-native';
+import {View, SafeAreaView, ActivityIndicator, StyleSheet} from 'react-native';
 
 import {CustomFlatList} from '../components/custom_flatlist';
+import {GifView} from '../components/gif_view';
 import {TRENDING_GIFS, fetchData, UNAUTHENTICATED} from '../utilities';
 
 export const HomeScreen = () => {
@@ -17,15 +12,22 @@ export const HomeScreen = () => {
   const [trendingGifs, setTrendingGifs] = useState([]);
 
   useEffect(() => {
-    getTrendingGifs();
+    getTrendingGifs({refresh: true});
   }, []);
 
-  const getTrendingGifs = () => {
+  const getTrendingGifs = ({refresh = false}) => {
+    let url = refresh
+      ? TRENDING_GIFS
+      : TRENDING_GIFS + '&offset=' + trendingGifs.length;
+
     fetchData({
-      url: TRENDING_GIFS,
+      url,
     })
       .then(response => {
-        setTrendingGifs(response.data);
+        const list = refresh
+          ? response.data
+          : trendingGifs.concat(response.data);
+        setTrendingGifs(list);
       })
       .catch(({errors, appStatus}) => {
         if (appStatus === UNAUTHENTICATED) {
@@ -35,29 +37,24 @@ export const HomeScreen = () => {
       .finally(() => {
         setLoading(false);
         setRefreshing(false);
+        setFooterLoader(false);
       });
   };
 
   const onRefresh = () => {
     setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 200);
+    getTrendingGifs({refresh: true});
   };
 
   const onEndReached = () => {
-    // setFooterLoader(true);
-    // setTimeout(() => {
-    //   setFooterLoader(false);
-    // }, 200);
+    if (!footerLoader && !refreshing) {
+      setFooterLoader(true);
+      getTrendingGifs({});
+    }
   };
 
   const renderGifItem = ({item}) => {
-    return (
-      <View key={`${item.id}`}>
-        <Text>Hello</Text>
-      </View>
-    );
+    return <GifView key={`${item.id}`} item={item} />;
   };
 
   return (
