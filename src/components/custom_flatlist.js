@@ -63,6 +63,7 @@ export const CustomFlatList = props => {
       showsVerticalScrollIndicator={false}
       removeClippedSubviews={true}
       decelerationRate="normal"
+      onEndReachedThreshold={0.9}
       //   contentContainerStyle={{paddingBottom: insets.bottom}}
       {...otherProps}
     />
