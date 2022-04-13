@@ -1,24 +1,33 @@
 import React, {useState, useEffect} from 'react';
 import {View, SafeAreaView, ActivityIndicator, StyleSheet} from 'react-native';
 
-import {CustomFlatList} from '../components/custom_flatlist';
-import {GifView} from '../components/gif_view';
-import {TRENDING_GIFS, fetchData, UNAUTHENTICATED} from '../utilities';
+import {CustomFlatList, GifView, SearchBar} from '../components';
+import {
+  TRENDING_GIFS,
+  SEARCH_GIFS,
+  fetchData,
+  UNAUTHENTICATED,
+} from '../utilities';
 
 export const HomeScreen = () => {
   const [loading, setLoading] = useState(true);
   const [footerLoader, setFooterLoader] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [trendingGifs, setTrendingGifs] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     getTrendingGifs({refresh: true});
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm]);
 
   const getTrendingGifs = ({refresh = false}) => {
-    let url = refresh
-      ? TRENDING_GIFS
-      : TRENDING_GIFS + '&offset=' + trendingGifs.length;
+    let baseUrl =
+      searchTerm.length === 0
+        ? TRENDING_GIFS
+        : SEARCH_GIFS + '&q=' + searchTerm;
+
+    let url = refresh ? baseUrl : baseUrl + '&offset=' + trendingGifs.length;
 
     fetchData({
       url,
@@ -53,6 +62,8 @@ export const HomeScreen = () => {
     }
   };
 
+  const onSearchTermChange = text => setSearchTerm(text);
+
   const renderGifItem = ({item}) => {
     return <GifView key={`${item.id}`} item={item} />;
   };
@@ -72,6 +83,9 @@ export const HomeScreen = () => {
           onRefresh={onRefresh}
           onEndReached={onEndReached}
           footerLoader={footerLoader}
+          ListHeaderComponent={
+            <SearchBar value={searchTerm} onChangeText={onSearchTermChange} />
+          }
         />
       )}
     </SafeAreaView>
