@@ -1,5 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {View, SafeAreaView, ActivityIndicator, StyleSheet} from 'react-native';
+import {
+  View,
+  SafeAreaView,
+  ActivityIndicator,
+  useColorScheme,
+  StyleSheet,
+} from 'react-native';
 
 import {CustomFlatList, GifView, SearchBar} from '../components';
 import {
@@ -16,8 +22,16 @@ export const HomeScreen = () => {
   const [trendingGifs, setTrendingGifs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
+  const colorScheme = useColorScheme();
+
   useEffect(() => {
-    getTrendingGifs({refresh: true});
+    const handler = setTimeout(() => {
+      getTrendingGifs({refresh: true});
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm]);
 
@@ -72,7 +86,10 @@ export const HomeScreen = () => {
     <SafeAreaView style={styles.container}>
       {loading ? (
         <View style={styles.loaderContainer}>
-          <ActivityIndicator size="large" color="black" />
+          <ActivityIndicator
+            size="large"
+            color={colorScheme === 'dark' ? 'white' : 'black'}
+          />
         </View>
       ) : (
         <CustomFlatList

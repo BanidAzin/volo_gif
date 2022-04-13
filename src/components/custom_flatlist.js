@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Text,
   Dimensions,
+  useColorScheme,
 } from 'react-native';
 
 export const CustomFlatList = props => {
@@ -23,6 +24,7 @@ export const CustomFlatList = props => {
   } = props;
 
   const height = Dimensions.get('window').height;
+  const colorScheme = useColorScheme();
 
   const listEmptyComponent = () => {
     return (
@@ -30,11 +32,19 @@ export const CustomFlatList = props => {
         style={[
           styles.emptyTextContainer,
           {
-            height: height * 0.8,
+            height: height * 0.7,
           },
           emptyTextContainerStyle,
         ]}>
-        <Text style={[styles.emptyText, emptyTextStyle]}>{emptyText}</Text>
+        <Text
+          style={[
+            styles.emptyText,
+            // eslint-disable-next-line react-native/no-inline-styles
+            {color: colorScheme === 'dark' ? 'white' : 'black'},
+            emptyTextStyle,
+          ]}>
+          {emptyText}
+        </Text>
       </View>
     );
   };
