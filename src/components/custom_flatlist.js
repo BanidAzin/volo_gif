@@ -57,14 +57,12 @@ export const CustomFlatList = props => {
     <FlatList
       keyboardShouldPersistTaps="handled"
       initialNumToRender={25}
-      keyExtractor={item => `${item}`}
       ListFooterComponent={() => footerComponent()}
       ListEmptyComponent={() => listEmptyComponent()}
       showsVerticalScrollIndicator={false}
       removeClippedSubviews={true}
       decelerationRate="normal"
       onEndReachedThreshold={0.9}
-      //   contentContainerStyle={{paddingBottom: insets.bottom}}
       {...otherProps}
     />
   );

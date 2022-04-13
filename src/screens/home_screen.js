@@ -25,8 +25,8 @@ export const HomeScreen = () => {
     })
       .then(response => {
         const list = refresh
-          ? response.data
-          : trendingGifs.concat(response.data);
+          ? response.data ?? []
+          : trendingGifs.concat(response.data ?? []);
         setTrendingGifs(list);
       })
       .catch(({errors, appStatus}) => {
@@ -67,7 +67,7 @@ export const HomeScreen = () => {
         <CustomFlatList
           data={trendingGifs}
           renderItem={renderGifItem}
-          keyExtractor={item => `${item.id}`}
+          keyExtractor={(item, index) => `${item.id}${index}`}
           refreshing={refreshing}
           onRefresh={onRefresh}
           onEndReached={onEndReached}
